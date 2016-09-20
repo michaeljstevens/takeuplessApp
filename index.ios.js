@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import Map from './components/map.js';
+import Index from './index.js';
+import configureStore from './store/store.js';
 import {
   AppRegistry,
   StyleSheet,
@@ -8,9 +9,14 @@ import {
 } from 'react-native';
 
 class takeuplessApp extends Component {
+
   render() {
+
+    let store;
+    store = configureStore();
+
     return(
-      <Map />
+      <Index store={store}/>
     );
   }
 }

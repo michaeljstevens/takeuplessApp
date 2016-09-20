@@ -5,12 +5,19 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="22" />
 
     <application
+      android:name=".MainApplication">
+
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyCInG0bjW1wwe4H-jLhVSZzB6sLEGacQk0"/>
+
       android:name=".MainApplication"
       android:allowBackup="true"
       android:label="@string/app_name"
