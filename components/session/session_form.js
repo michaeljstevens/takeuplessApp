@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, TextInput, StyleSheet, Image, AsyncStorage} from 'react-native';
 import Button from 'react-native-button';
+import {Actions} from 'react-native-router-flux';
 
 class SessionForm extends Component {
   constructor(props) {
@@ -27,10 +28,15 @@ class SessionForm extends Component {
 
   componentWillReceiveProps(newProps) {
     if (!this.props.currentUser && newProps.currentUser) {
-      AsyncStorage.multiSet([
-  			['username', this.state.username],
-  			['password', this.state.password]
-  		]);
+      AsyncStorage.multiGet(['username', 'password']).then((data) => {
+        if (!data[0][1] && !data[1][1]) {
+          AsyncStorage.multiSet([
+      			['username', this.state.username],
+      			['password', this.state.password]
+      		]);
+        }
+      });
+      Actions.mapScreen();
     }
   }
 
@@ -44,7 +50,6 @@ class SessionForm extends Component {
     e.preventDefault();
     const user = this.state;
     this.props.login(user);
-    this.setState({username: "", password: ""});
   }
 
   logout(e) {
@@ -58,7 +63,8 @@ class SessionForm extends Component {
     const logoutButton = <Button onPress={this.logout} style={styles.button}>Logout</Button>;
     return(
       <View style={styles.container}>
-        {this.props.currentUser ? <Image style={{width: 50, height: 50}} source={{uri: this.props.currentUser.profile_picture}} /> : null }
+        {this.props.currentUser ? <Image style={{width: 50, height: 50}}
+        source={{uri: this.props.currentUser.profile_picture}} /> : null }
         <TextInput onChangeText={this.updateState("username")} style={styles.input} />
         <TextInput onChangeText={this.updateState("password")} secureTextEntry={true} style={styles.input} />
         {this.props.currentUser ? logoutButton : loginButton}
@@ -71,14 +77,18 @@ class SessionForm extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: 'black',
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: 'white',
     borderWidth: 1,
+    color: '#fff',
+    width: 200,
+    textAlign: 'center'
   },
   button: {
     fontSize: 20,

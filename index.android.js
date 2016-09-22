@@ -5,7 +5,8 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ToolbarAndroid
 } from 'react-native';
 
 class takeuplessApp extends Component {

@@ -10,7 +10,13 @@ export const login = function(user, success, error) {
 			'Content-Type': 'application/json',
 		},
 		body: JSON.stringify({user: user})
-	}).then((response) => response.json()).then(success).catch(error);
+	}).then((response) => {
+		if (response.ok) {
+			return response.json();
+		} else {
+			alert("Invalid Credentials");
+		}
+	}).then(success);
 };
 
 export const logout = function(success){

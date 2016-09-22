@@ -1,17 +1,31 @@
 import React, { Component } from 'react';
-import { Router, Scene } from 'react-native-router-flux';
+import { Router, Scene, Actions } from 'react-native-router-flux';
 import MapContainer from './components/map/map_container.js';
 import SessionFormContainer from './components/session/session_form_container.js';
+import App from './app.js';
 
 
-export default class App extends Component {
+class AppRouter extends Component {
+
+  constructor(props) {
+    super(props);
+  }
+
   render() {
     return (
-      <Router>
+      <Router hideNavBar={true}>
         <Scene key="root">
-          <Scene key="sessionFormContainer" component={MapContainer} title="SessionFormContainer" initial={true} />
+          <Scene key="loginScreen" component={SessionFormContainer}
+            initial={true} />
+          <Scene key="mapScreen" component={MapContainer} />
         </Scene>
       </Router>
     );
   }
 }
+
+AppRouter.contextTypes = {
+  store: React.PropTypes.object.isRequired
+};
+
+export default AppRouter;

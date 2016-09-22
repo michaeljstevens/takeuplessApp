@@ -1,43 +1,147 @@
 import React, { Component } from 'react';
+import NavbarContainer from '../navbar/navbar_container.js';
 import {
   StyleSheet,
+  Picker,
   Text,
-  View
+  View,
+  TouchableHighlight,
 } from 'react-native';
 
-import MapView from 'react-native-maps';
+import MapView, {Polyline} from 'react-native-maps';
 class Map extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      position: null
+      region: {
+        latitude: 37.782957,
+        longitude: -122.397981,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+        distance: null,
+        duration: null,
+      },
+      coordinates: [],
+      started: false,
     };
+    this.startMarker = {latitude: 37.782957, longitude: -122.397981};
+    this.startWorkout = this.startWorkout.bind(this);
+    this.stopWorkout = this.stopWorkout.bind(this);
+    this.getDuration = this.getDuration.bind(this);
   }
 
+  componentWillMount() {
+    navigator.geolocation.getCurrentPosition(
+     (position) => {
+       const lat = position.coords.latitude;
+       const lng = position.coords.longitude;
+       this.startMarker = {latitude: lat, longitude: lng};
+       this.setState({region: {
+         latitude: lat,
+         longitude: lng,
+         latitudeDelta: 0.00922,
+         longitudeDelta: 0.00421,
+       }});
+     },
+     (error) => {console.log(error);}
+   );
+  }
+
+  startWorkout() {
+    let that = this;
+    this.startTime = new Date();
+    this.watch = navigator.geolocation.watchPosition(
+      (position) => {
+        console.log(position.coords.latitude);
+        console.log(position.coords.longitude);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const newCoords = Array.from(that.state.coordinates);
+        const toAdd = {latitude: lat, longitude: lng};
+        if(!newCoords.includes(toAdd)) {
+          newCoords.push(toAdd);
+        }
+        that.setState({coordinates: newCoords, region: {
+          latitude: lat,
+          longitude: lng,
+          latitudeDelta: 0.00922,
+          longitudeDelta: 0.00421
+        }, started: true});
+      },
+      (error) => {console.log(error);}
+    );
+  }
+
+  stopWorkout() {
+    this.stopTime = new Date();
+    navigator.geolocation.clearWatch(this.watch);
+    this.setState({started: false});
+    this.getDistance();
+    this.getDuration();
+  }
+
+  getDuration() {
+    let m = Math.round((this.stopTime - this.startTime) / 1000 / 60);
+    let sM = `${m} mins`;
+    this.setState({duration: sM});
+  }
+
+  getDistance() {
+    let coordinates = this.state.coordinates;
+    let kmDistance = 0;
+    for (let i = 0; i < coordinates.length - 1; i++) {
+      const lat1 = coordinates[i].latitude;
+      const lon1 = coordinates[i].longitude;
+      const lat2 = coordinates[i + 1].latitude;
+      const lon2 = coordinates[i + 1].longitude;
+      kmDistance += this.getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+    }
+    let mDistance = Math.round((kmDistance * 0.62) * 10)/10;
+    let sDistance = `${mDistance} mi`;
+    this.setState({distance: sDistance});
+  }
+
+  getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    let R = 6371; // Radius of the earth in km
+    let dLat = this.deg2rad(lat2-lat1);  // deg2rad below
+    let dLon = this.deg2rad(lon2-lon1);
+    let a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ;
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    let d = R * c; // Distance in km
+    return d;
+  }
+
+  deg2rad(deg) {
+    return deg * (Math.PI/180);
+  }
 
   render() {
 
-    // setInterval(()=> {
-    //   navigator.geolocation.getCurrentPosition(
-    //     (position) => {
-    //       this.setState({position: position});
-    //     },(error) => alert(error),
-    //     {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    //   );
-    // }, 5000);
+    const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
+      <Text style={styles.text}>Start</Text>
+    </TouchableHighlight>;
+
+    const stopButton = <TouchableHighlight style={styles.touchable} onPress={this.stopWorkout}>
+      <Text style={styles.text}>Stop</Text>
+    </TouchableHighlight>;
 
 
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>{this.state.position ? this.state.position.coords.longitude : "Nothing to show"}</Text>
-        <MapView style={styles.map} region={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          }}
-          />
+        <NavbarContainer />
+        <MapView style={styles.map}  region={this.state.region}>
+          <Polyline coordinates={this.state.coordinates} strokeWidth={5} strokeColor={'#00F'}
+            />
+          <MapView.Marker
+            coordinate={this.startMarker}
+            />
+        </MapView>
+        {this.state.started ? stopButton : startButton}
       </View>
     );
   }
@@ -46,21 +150,26 @@ class Map extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   },
   map: {
    position: 'absolute',
-   top: 100,
+   top: 80,
    left: 0,
    right: 0,
    bottom: 0,
  },
  text: {
+   fontSize: 45,
+   color: "#000",
+   zIndex: 1000,
+ },
+ touchable: {
    position: 'absolute',
-   top: 50,
- }
+   top: 200,
+   left: 20,
+ },
 });
 
 export default Map;
