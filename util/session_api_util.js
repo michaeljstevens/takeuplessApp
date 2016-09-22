@@ -2,7 +2,7 @@ import {AsyncStorage} from 'react-native';
 
 
 export const login = function(user, success, error) {
-	let path='http://www.takeupless.space/api/session';
+	let path='http://localhost:3000/api/session';
 	fetch(path, {
 		method: 'POST',
 		headers: {
@@ -31,3 +31,5 @@ export const logout = function(success){
 		console.log("Logout error");
 	});
 };
+
+// 'http://www.takeupless.space/api/session'

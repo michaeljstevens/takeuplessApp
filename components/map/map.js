@@ -19,16 +19,24 @@ class Map extends Component {
         longitude: -122.397981,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
-        distance: null,
-        duration: null,
       },
       coordinates: [],
       started: false,
+      route: {
+        user_id: this.props.currentUser.id,
+        distance: null,
+        duration: null,
+        title: "test title",
+        description: "test description",
+        activity_type: "WALKING",
+        appcoords: null
+      }
     };
     this.startMarker = {latitude: 37.782957, longitude: -122.397981};
     this.startWorkout = this.startWorkout.bind(this);
     this.stopWorkout = this.stopWorkout.bind(this);
     this.getDuration = this.getDuration.bind(this);
+    this.submitRoute = this.submitRoute.bind(this);
   }
 
   componentWillMount() {
@@ -79,12 +87,23 @@ class Map extends Component {
     this.setState({started: false});
     this.getDistance();
     this.getDuration();
+    this.submitRoute();
+  }
+
+  submitRoute() {
+    let route = this.state.route;
+    let routeCoords = [];
+    this.state.coordinates.forEach(coord => {
+      routeCoords.push({'lat': coord.latitude, 'lng': coord.longitude});
+    });
+    route.appcoords = routeCoords;
+    this.props.createRoute(route);
   }
 
   getDuration() {
     let m = Math.round((this.stopTime - this.startTime) / 1000 / 60);
     let sM = `${m} mins`;
-    this.setState({duration: sM});
+    this.state.route.duration = sM;
   }
 
   getDistance() {
@@ -99,7 +118,7 @@ class Map extends Component {
     }
     let mDistance = Math.round((kmDistance * 0.62) * 10)/10;
     let sDistance = `${mDistance} mi`;
-    this.setState({distance: sDistance});
+    this.state.route.distance = sDistance;
   }
 
   getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
@@ -121,7 +140,6 @@ class Map extends Component {
   }
 
   render() {
-
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
