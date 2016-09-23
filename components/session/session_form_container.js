@@ -6,7 +6,8 @@ import { login, logout } from '../../actions/session_actions';
 const mapStateToProps = state => {
   return ({
     loggedIn: !!state.session.currentUser,
-    currentUser: state.session.currentUser
+    currentUser: state.session.currentUser,
+    errors: state.errors,
   });
 };
 

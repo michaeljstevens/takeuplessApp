@@ -7,23 +7,20 @@ import {
   View,
   TouchableHighlight,
   StatusBar,
+  Alert,
 } from 'react-native';
 
 import MapView, {Polyline} from 'react-native-maps';
 import RouteModal from './modal.js';
 import StopWatch from '../stopwatch/stopwatch.js';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Map extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      region: {
-        latitude: 37.782957,
-        longitude: -122.397981,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      },
+      region: null,
       coordinates: [],
       started: false,
       route: {
@@ -34,7 +31,8 @@ class Map extends Component {
         description: "",
         activity_type: "",
         appcoords: null
-      }
+      },
+      visible: false,
     };
     this.startMarker = {latitude: 37.782957, longitude: -122.397981};
     this.startWorkout = this.startWorkout.bind(this);
@@ -61,6 +59,7 @@ class Map extends Component {
   }
 
   startWorkout() {
+    this.setState({visible: true});
     let that = this;
     this.startTime = new Date();
     this.watch = navigator.geolocation.watchPosition(
@@ -79,7 +78,7 @@ class Map extends Component {
           longitude: lng,
           latitudeDelta: 0.00922,
           longitudeDelta: 0.00421
-        }, started: true});
+        }, started: true, visible: false});
       },
       (error) => {console.log(error);}
     );
@@ -112,6 +111,7 @@ class Map extends Component {
       activity_type: "",
       appcoords: null
     }, coordinates: [], started: false});
+    Alert.alert('', "Route Created Successfully");
   }
 
   getDuration() {
@@ -154,7 +154,6 @@ class Map extends Component {
   }
 
   render() {
-
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
@@ -164,6 +163,7 @@ class Map extends Component {
 
     return (
       <View style={styles.container}>
+        <Spinner visible={this.state.visible} />
         <StatusBar
           hidden={true}
           />

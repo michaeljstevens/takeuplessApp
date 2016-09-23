@@ -1,14 +1,16 @@
 import React, {Component} from 'react';
 import {View, Text, TextInput, StyleSheet,
-  Image, AsyncStorage, StatusBar, TouchableHighlight} from 'react-native';
+  Image, AsyncStorage, StatusBar, TouchableHighlight, Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class SessionForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      visible: false,
     };
     this.updateState = this.updateState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -21,13 +23,13 @@ class SessionForm extends Component {
         this.state.username = data[0][1];
         this.state.password = data[1][1];
         this.props.login(this.state);
-        this.setState({username: "", password: ""});
+        this.setState({visible: true, username: "", password: ""});
       }
     });
   }
 
   componentWillReceiveProps(newProps) {
-    if (!this.props.currentUser && newProps.currentUser) {
+    if (newProps.currentUser && !(newProps.currentUser[0])) {
       AsyncStorage.multiGet(['username', 'password']).then((data) => {
         if (!data[0][1] && !data[1][1]) {
           AsyncStorage.multiSet([
@@ -37,7 +39,10 @@ class SessionForm extends Component {
         }
       });
       Actions.mapScreen();
+    } else if (newProps.currentUser && newProps.currentUser[0] === "Invalid Credentials") {
+      Alert.alert('', "Username and Password Mismatch");
     }
+    this.setState({visible: false});
   }
 
   updateState(field){
@@ -48,7 +53,9 @@ class SessionForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({visible: true});
     const user = this.state;
+    delete user.visible;
     this.props.login(user);
   }
 
@@ -59,9 +66,9 @@ class SessionForm extends Component {
   }
 
   render() {
-
     return(
       <View style={styles.container}>
+        <Spinner visible={this.state.visible} />
         <StatusBar
           barStyle='light-content'
           />
