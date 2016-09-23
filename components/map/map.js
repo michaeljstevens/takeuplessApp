@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 
 import MapView, {Polyline} from 'react-native-maps';
+import RouteModal from './modal.js';
+
 class Map extends Component {
 
   constructor(props) {
@@ -26,9 +28,9 @@ class Map extends Component {
         user_id: this.props.currentUser.id,
         distance: null,
         duration: null,
-        title: "test title",
-        description: "test description",
-        activity_type: "WALKING",
+        title: "",
+        description: "",
+        activity_type: "",
         appcoords: null
       }
     };
@@ -84,19 +86,20 @@ class Map extends Component {
   stopWorkout() {
     this.stopTime = new Date();
     navigator.geolocation.clearWatch(this.watch);
-    this.setState({started: false});
-    this.getDistance();
-    this.getDuration();
-    this.submitRoute();
   }
 
-  submitRoute() {
+  submitRoute(modalState) {
+    this.getDistance();
+    this.getDuration();
     let route = this.state.route;
     let routeCoords = [];
     this.state.coordinates.forEach(coord => {
       routeCoords.push({'lat': coord.latitude, 'lng': coord.longitude});
     });
     route.appcoords = routeCoords;
+    route.title = modalState.title;
+    route.description = modalState.description;
+    route.activity_type = modalState.activity_type;
     this.props.createRoute(route);
   }
 
@@ -144,10 +147,11 @@ class Map extends Component {
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
 
-    const stopButton = <TouchableHighlight style={styles.touchable} onPress={this.stopWorkout}>
-      <Text style={styles.text}>Stop</Text>
-    </TouchableHighlight>;
+    // const stopButton = <TouchableHighlight style={styles.touchable} onPress={this.stopWorkout}>
+    // </TouchableHighlight>;
 
+    const stopButton = <RouteModal stopWorkout={this.stopWorkout} route={this.state.route} coordinates={this.state.coordinates}
+      submitRoute={this.submitRoute} />;
 
     return (
       <View style={styles.container}>
@@ -180,13 +184,15 @@ const styles = StyleSheet.create({
  },
  text: {
    fontSize: 45,
-   color: "#000",
-   zIndex: 1000,
+   color: "#FFF",
  },
  touchable: {
    position: 'absolute',
-   top: 200,
-   left: 20,
+   bottom: 20,
+   right: 20,
+   backgroundColor: '#000',
+   padding: 5,
+   borderRadius: 5,
  },
 });
 
