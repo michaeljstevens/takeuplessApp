@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {View, Text, TextInput, StyleSheet, Image, AsyncStorage} from 'react-native';
-import Button from 'react-native-button';
+import {View, Text, TextInput, StyleSheet,
+  Image, AsyncStorage, StatusBar, TouchableHighlight} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 class SessionForm extends Component {
@@ -59,15 +59,26 @@ class SessionForm extends Component {
   }
 
   render() {
-    const loginButton = <Button onPress={this.handleSubmit} style={styles.button}>Login</Button>;
-    const logoutButton = <Button onPress={this.logout} style={styles.button}>Logout</Button>;
+
     return(
       <View style={styles.container}>
-        {this.props.currentUser ? <Image style={{width: 50, height: 50}}
-        source={{uri: this.props.currentUser.profile_picture}} /> : null }
-        <TextInput onChangeText={this.updateState("username")} style={styles.input} />
-        <TextInput onChangeText={this.updateState("password")} secureTextEntry={true} style={styles.input} />
-        {this.props.currentUser ? logoutButton : loginButton}
+        <StatusBar
+          barStyle='light-content'
+          />
+
+        <View style={{padding: 5}}>
+          <Text style={styles.text}>Username</Text>
+          <TextInput onChangeText={this.updateState("username")} style={styles.input} />
+        </View>
+
+        <View style={{padding: 5}}>
+          <Text style={styles.text}>Password</Text>
+          <TextInput onChangeText={this.updateState("password")} secureTextEntry={true} style={styles.input} />
+          <TouchableHighlight style={styles.touchable} onPress={this.handleSubmit}>
+            <Text style={[styles.text, {borderWidth: 1, borderColor: 'white', padding: 5,
+            borderRadius: 5, width: 75, marginTop: 20, marginLeft: 125, textAlign: 'center'}]}>Login</Text>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
@@ -78,9 +89,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
+    paddingTop: 150,
+  },
+  text: {
+    fontSize: 25,
+    color: 'white',
   },
   input: {
     height: 40,
@@ -90,10 +105,6 @@ const styles = StyleSheet.create({
     width: 200,
     textAlign: 'center'
   },
-  button: {
-    fontSize: 20,
-    color: 'green'
-  }
 });
 
 export default SessionForm;

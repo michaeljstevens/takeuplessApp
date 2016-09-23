@@ -101,6 +101,15 @@ class Map extends Component {
     route.description = modalState.description;
     route.activity_type = modalState.activity_type;
     this.props.createRoute(route);
+    this.setState({route: {
+      user_id: this.props.currentUser.id,
+      distance: null,
+      duration: null,
+      title: "",
+      description: "",
+      activity_type: "",
+      appcoords: null
+    }, coordinates: [], started: false});
   }
 
   getDuration() {
@@ -174,6 +183,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
+    backgroundColor: '#000',
   },
   map: {
    position: 'absolute',
