@@ -66,6 +66,9 @@ class SessionForm extends Component {
           barStyle='light-content'
           />
 
+        <Image style = {styles.logo}
+        source={{uri: 'http://res.cloudinary.com/dj6gqauyi/image/upload/v1473357234/logo_ucucfj.png'}} />
+
         <View style={{padding: 5}}>
           <Text style={styles.text}>Username</Text>
           <TextInput onChangeText={this.updateState("username")} style={styles.input} />
@@ -91,11 +94,16 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'black',
-    paddingTop: 150,
+    paddingTop: 50,
   },
   text: {
     fontSize: 25,
     color: 'white',
+  },
+  logo: {
+    width: 300,
+    height: 75,
+    marginBottom: 50,
   },
   input: {
     height: 40,

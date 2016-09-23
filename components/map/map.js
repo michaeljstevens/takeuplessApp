@@ -6,10 +6,12 @@ import {
   Text,
   View,
   TouchableHighlight,
+  StatusBar,
 } from 'react-native';
 
 import MapView, {Polyline} from 'react-native-maps';
 import RouteModal from './modal.js';
+import StopWatch from '../stopwatch/stopwatch.js';
 
 class Map extends Component {
 
@@ -152,18 +154,19 @@ class Map extends Component {
   }
 
   render() {
+
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
-
-    // const stopButton = <TouchableHighlight style={styles.touchable} onPress={this.stopWorkout}>
-    // </TouchableHighlight>;
 
     const stopButton = <RouteModal stopWorkout={this.stopWorkout} route={this.state.route} coordinates={this.state.coordinates}
       submitRoute={this.submitRoute} />;
 
     return (
       <View style={styles.container}>
+        <StatusBar
+          hidden={true}
+          />
         <NavbarContainer />
         <MapView style={styles.map}  region={this.state.region}>
           <Polyline coordinates={this.state.coordinates} strokeWidth={5} strokeColor={'#00F'}
@@ -172,6 +175,7 @@ class Map extends Component {
             coordinate={this.startMarker}
             />
         </MapView>
+        <StopWatch started={this.state.started} />
         {this.state.started ? stopButton : startButton}
       </View>
     );
@@ -187,7 +191,7 @@ const styles = StyleSheet.create({
   },
   map: {
    position: 'absolute',
-   top: 80,
+   top: 60,
    left: 0,
    right: 0,
    bottom: 0,
