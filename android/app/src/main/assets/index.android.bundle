@@ -87893,6 +87893,7 @@ unmountScenes:_react.PropTypes.bool};
 }, "react-native-router-flux/src/Switch.js");
 __d(714 /* takeuplessApp/components/map/map_container.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _reactRedux=require(45 /* react-redux */);
 var _route_actions=require(715 /* ../../actions/route_actions.js */);
+var _session_actions=require(721 /* ../../actions/session_actions.js */);
 var _map=require(716 /* ./map.js */);var _map2=babelHelpers.interopRequireDefault(_map);
 
 
@@ -87901,7 +87902,8 @@ currentUser:state.session.currentUser};};
 
 
 var mapDispatchToProps=function mapDispatchToProps(dispatch){return{
-createRoute:function createRoute(route){return dispatch((0,_route_actions.createRoute)(route));}};};exports.default=
+createRoute:function createRoute(route){return dispatch((0,_route_actions.createRoute)(route));},
+logout:function logout(){return dispatch((0,_session_actions.logout)());}};};exports.default=
 
 
 (0,_reactRedux.connect)(
@@ -87923,6 +87925,25 @@ var receiveSingleRoute=exports.receiveSingleRoute=function receiveSingleRoute(ro
 type:RouteConstants.RECEIVE_SINGLE_ROUTE,
 route:route};};
 }, "takeuplessApp/actions/route_actions.js");
+__d(721 /* takeuplessApp/actions/session_actions.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var SessionConstants=exports.SessionConstants={
+LOGIN:"LOGIN",
+LOGOUT:"LOGOUT",
+RECEIVE_CURRENT_USER:"RECEIVE_CURRENT_USER"};
+
+
+var login=exports.login=function login(user){return{
+type:SessionConstants.LOGIN,
+user:user};};
+
+
+var logout=exports.logout=function logout(){return{
+type:SessionConstants.LOGOUT};};
+
+
+var receiveCurrentUser=exports.receiveCurrentUser=function receiveCurrentUser(currentUser){return{
+type:SessionConstants.RECEIVE_CURRENT_USER,
+currentUser:currentUser};};
+}, "takeuplessApp/actions/session_actions.js");
 __d(716 /* takeuplessApp/components/map/map.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _navbar_container=require(717 /* ../navbar/navbar_container.js */);var _navbar_container2=babelHelpers.interopRequireDefault(_navbar_container);
 var _reactNative=require(77 /* react-native */);
@@ -87935,10 +87956,12 @@ var _reactNative=require(77 /* react-native */);
 
 
 
+
 var _reactNativeMaps=require(722 /* react-native-maps */);var _reactNativeMaps2=babelHelpers.interopRequireDefault(_reactNativeMaps);
 var _modal=require(729 /* ./modal.js */);var _modal2=babelHelpers.interopRequireDefault(_modal);
 var _stopwatch=require(736 /* ../stopwatch/stopwatch.js */);var _stopwatch2=babelHelpers.interopRequireDefault(_stopwatch);
-var _reactNativeLoadingSpinnerOverlay=require(737 /* react-native-loading-spinner-overlay */);var _reactNativeLoadingSpinnerOverlay2=babelHelpers.interopRequireDefault(_reactNativeLoadingSpinnerOverlay);var
+var _reactNativeLoadingSpinnerOverlay=require(737 /* react-native-loading-spinner-overlay */);var _reactNativeLoadingSpinnerOverlay2=babelHelpers.interopRequireDefault(_reactNativeLoadingSpinnerOverlay);
+var _reactNativeRouterFlux=require(73 /* react-native-router-flux */);var
 
 Map=function(_Component){babelHelpers.inherits(Map,_Component);
 
@@ -87957,13 +87980,16 @@ description:"",
 activity_type:"",
 appcoords:null},
 
-visible:false};
+visible:false,
+showMenu:false};
 
 _this.startMarker={latitude:37.782957,longitude:-122.397981};
 _this.startWorkout=_this.startWorkout.bind(_this);
 _this.stopWorkout=_this.stopWorkout.bind(_this);
 _this.getDuration=_this.getDuration.bind(_this);
-_this.submitRoute=_this.submitRoute.bind(_this);return _this;
+_this.submitRoute=_this.submitRoute.bind(_this);
+_this.showMenu=_this.showMenu.bind(_this);
+_this.logout=_this.logout.bind(_this);return _this;
 }babelHelpers.createClass(Map,[{key:'componentWillMount',value:function componentWillMount()
 
 {var _this2=this;
@@ -88010,7 +88036,7 @@ longitudeDelta:0.00421},
 visible:false,started:true});
 },
 function(error){console.log(error);},
-{enableHighAccuracy:true,distanceFilter:5});
+{enableHighAccuracy:true,distanceFilter:1});
 
 }},{key:'stopWorkout',value:function stopWorkout()
 
@@ -88081,11 +88107,35 @@ return d;
 
 deg){
 return deg*(Math.PI/180);
+}},{key:'showMenu',value:function showMenu()
+
+{
+if(this.state.showMenu){
+this.setState({showMenu:false});
+}else{
+this.setState({showMenu:true});
+}
+}},{key:'logout',value:function logout(
+
+e){
+e.preventDefault();
+this.props.logout();
+_reactNative.AsyncStorage.multiRemove(['username','password']);
+_reactNativeRouterFlux.Actions.loginScreen({type:'reset'});
 }},{key:'render',value:function render()
 
 {
 var startButton=_react2.default.createElement(_reactNative.TouchableHighlight,{style:styles.touchable,onPress:this.startWorkout},
 _react2.default.createElement(_reactNative.Text,{style:styles.text},'Start'));
+
+
+var menu=_react2.default.createElement(_reactNative.View,{style:styles.menuContainer},
+_react2.default.createElement(_reactNative.TouchableHighlight,{onPress:this.logout},
+_react2.default.createElement(_reactNative.Text,{style:styles.menuText},'Logout')),
+
+_react2.default.createElement(_reactNative.TouchableHighlight,{onPress:this.showMenu},
+_react2.default.createElement(_reactNative.Text,{style:styles.menuText},'Return')));
+
 
 
 var stopButton=_react2.default.createElement(_modal2.default,{stopWorkout:this.stopWorkout,route:this.state.route,coordinates:this.state.coordinates,
@@ -88097,7 +88147,7 @@ _react2.default.createElement(_reactNativeLoadingSpinnerOverlay2.default,{visibl
 _react2.default.createElement(_reactNative.StatusBar,{
 hidden:true}),
 
-_react2.default.createElement(_navbar_container2.default,null),
+_react2.default.createElement(_navbar_container2.default,{showMenu:this.showMenu}),
 _react2.default.createElement(_reactNativeMaps2.default,{style:styles.map,region:this.state.region},
 _react2.default.createElement(_reactNativeMaps.Polyline,{coordinates:this.state.coordinates,strokeWidth:5,strokeColor:'#00F'}),
 
@@ -88106,10 +88156,12 @@ coordinate:this.startMarker})),
 
 
 _react2.default.createElement(_stopwatch2.default,{started:this.state.started}),
-this.state.started?stopButton:startButton));
+this.state.started?stopButton:startButton,
+this.state.showMenu?menu:null));
 
 
 }}]);return Map;}(_react.Component);
+
 
 
 var styles=_reactNative.StyleSheet.create({
@@ -88118,6 +88170,24 @@ flex:1,
 flexDirection:'row',
 justifyContent:'center',
 backgroundColor:'#000'},
+
+
+menuContainer:{
+position:'absolute',
+top:60,
+right:15,
+backgroundColor:'#FFF',
+borderRadius:5,
+zIndex:1001,
+flex:1,
+justifyContent:'center',
+borderWidth:1,
+width:115},
+
+menuText:{
+fontSize:30,
+color:"#000",
+padding:5},
 
 map:{
 position:'absolute',
@@ -88137,6 +88207,8 @@ right:20,
 backgroundColor:'#000',
 padding:5,
 borderRadius:5}});exports.default=
+
+
 
 
 
@@ -88166,32 +88238,25 @@ mapDispatchToProps)(_navbar2.default);
 }, "takeuplessApp/components/navbar/navbar_container.js");
 __d(718 /* takeuplessApp/components/navbar/navbar.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(77 /* react-native */);
-var _reactNativeRouterFlux=require(73 /* react-native-router-flux */);
-var _reactNativeButton=require(719 /* react-native-button */);var _reactNativeButton2=babelHelpers.interopRequireDefault(_reactNativeButton);var
+var _reactNativeRouterFlux=require(73 /* react-native-router-flux */);var
 
 Navbar=function(_Component){babelHelpers.inherits(Navbar,_Component);
 
-function Navbar(props){babelHelpers.classCallCheck(this,Navbar);var _this=babelHelpers.possibleConstructorReturn(this,(Navbar.__proto__||Object.getPrototypeOf(Navbar)).call(this,
+function Navbar(props){babelHelpers.classCallCheck(this,Navbar);return babelHelpers.possibleConstructorReturn(this,(Navbar.__proto__||Object.getPrototypeOf(Navbar)).call(this,
 props));
-_this.logout=_this.logout.bind(_this);return _this;
-}babelHelpers.createClass(Navbar,[{key:'logout',value:function logout(
-
-e){
-e.preventDefault();
-this.props.logout();
-_reactNative.AsyncStorage.multiRemove(['username','password']);
-_reactNativeRouterFlux.Actions.loginScreen();
-}},{key:'render',value:function render()
+}babelHelpers.createClass(Navbar,[{key:'render',value:function render()
 
 {
 return(
 _react2.default.createElement(_reactNative.View,{style:styles.container},
 _react2.default.createElement(_reactNative.Image,{style:styles.logo,
 source:{uri:'http://res.cloudinary.com/dj6gqauyi/image/upload/v1473357234/logo_ucucfj.png'}}),
+_react2.default.createElement(_reactNative.TouchableHighlight,{onPress:this.props.showMenu},
 _react2.default.createElement(_reactNative.View,{style:styles.rightContent},
-_react2.default.createElement(_reactNativeButton2.default,{onPress:this.logout,style:styles.button},'Logout'),
+_react2.default.createElement(_reactNative.Text,{style:styles.name},this.props.currentUser.username),
 this.props.loggedIn?_react2.default.createElement(_reactNative.Image,{style:styles.profile,
-source:{uri:this.props.currentUser.profile_picture}}):null)));
+source:{uri:this.props.currentUser.profile_picture}}):null))));
+
 
 
 
@@ -88222,166 +88287,21 @@ marginRight:4},
 
 logo:{
 width:200,
-height:40},
+height:40,
+marginLeft:5},
 
-button:{
+name:{
 color:'#fff',
-marginTop:13,
-marginRight:5}});exports.default=
+fontSize:15,
+marginTop:10,
+textAlign:'right',
+marginRight:7,
+width:75}});exports.default=
 
 
 
 Navbar;
 }, "takeuplessApp/components/navbar/navbar.js");
-__d(719 /* react-native-button/Button.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
-var _reactNative=require(77 /* react-native */);
-
-
-
-
-
-
-var _coalesceNonElementChildren=require(720 /* ./coalesceNonElementChildren */);var _coalesceNonElementChildren2=babelHelpers.interopRequireDefault(_coalesceNonElementChildren);
-
-var systemButtonOpacity=0.2;var
-
-Button=function(_Component){babelHelpers.inherits(Button,_Component);function Button(){babelHelpers.classCallCheck(this,Button);return babelHelpers.possibleConstructorReturn(this,(Button.__proto__||Object.getPrototypeOf(Button)).apply(this,arguments));}babelHelpers.createClass(Button,[{key:'render',value:function render()
-
-
-
-
-
-
-
-
-{
-var touchableProps={
-activeOpacity:this._computeActiveOpacity()};
-
-if(!this.props.disabled){
-touchableProps.onPress=this.props.onPress;
-touchableProps.onPressIn=this.props.onPressIn;
-touchableProps.onPressOut=this.props.onPressOut;
-touchableProps.onLongPress=this.props.onLongPress;
-}
-
-return(
-_react2.default.createElement(_reactNative.TouchableOpacity,babelHelpers.extends({},
-touchableProps,{
-testID:this.props.testID,
-style:this.props.containerStyle,
-accessibilityTraits:'button',
-accessibilityComponentType:'button'}),
-
-this._renderGroupedChildren()));
-
-
-}},{key:'_renderGroupedChildren',value:function _renderGroupedChildren()
-
-{var
-disabled=this.props.disabled;
-var style=[
-styles.text,
-disabled?styles.disabledText:null,
-this.props.style,
-disabled?this.props.styleDisabled:null];
-
-
-var children=(0,_coalesceNonElementChildren2.default)(this.props.children,function(children,index){
-return(
-_react2.default.createElement(_reactNative.Text,{key:index,style:style},
-children));
-
-
-});
-
-switch(children.length){
-case 0:
-return null;
-case 1:
-return children[0];
-default:
-return _react2.default.createElement(_reactNative.View,{style:styles.group},children);}
-
-}},{key:'_computeActiveOpacity',value:function _computeActiveOpacity()
-
-{
-if(this.props.disabled){
-return 1;
-}
-return this.props.activeOpacity!=null?
-this.props.activeOpacity:
-systemButtonOpacity;
-}}]);return Button;}(_react.Component);Button.propTypes=babelHelpers.extends({},_reactNative.TouchableOpacity.propTypes,{containerStyle:_reactNative.View.propTypes.style,disabled:_react.PropTypes.bool,style:_reactNative.Text.propTypes.style,styleDisabled:_reactNative.Text.propTypes.style});exports.default=Button;
-;
-
-var styles=_reactNative.StyleSheet.create({
-text:{
-color:'#007aff',
-fontFamily:'.HelveticaNeueInterface-MediumP4',
-fontSize:17,
-fontWeight:'bold',
-textAlign:'center'},
-
-disabledText:{
-color:'#dcdcdc'},
-
-group:{
-flexDirection:'row',
-justifyContent:'space-between',
-alignItems:'center'}});
-}, "react-native-button/Button.js");
-__d(720 /* react-native-button/coalesceNonElementChildren.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});exports.default=
-
-
-coalesceNonElementChildren;var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);function coalesceNonElementChildren(children,coalesceNodes){
-var coalescedChildren=[];
-
-var contiguousNonElements=[];
-_react.Children.forEach(children,function(child){
-if(!_react2.default.isValidElement(child)){
-contiguousNonElements.push(child);
-return;
-}
-
-if(contiguousNonElements.length){
-coalescedChildren.push(
-coalesceNodes(contiguousNonElements,coalescedChildren.length));
-
-contiguousNonElements=[];
-}
-
-coalescedChildren.push(child);
-});
-
-if(contiguousNonElements.length){
-coalescedChildren.push(
-coalesceNodes(contiguousNonElements,coalescedChildren.length));
-
-}
-
-return coalescedChildren;
-}
-}, "react-native-button/coalesceNonElementChildren.js");
-__d(721 /* takeuplessApp/actions/session_actions.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var SessionConstants=exports.SessionConstants={
-LOGIN:"LOGIN",
-LOGOUT:"LOGOUT",
-RECEIVE_CURRENT_USER:"RECEIVE_CURRENT_USER"};
-
-
-var login=exports.login=function login(user){return{
-type:SessionConstants.LOGIN,
-user:user};};
-
-
-var logout=exports.logout=function logout(){return{
-type:SessionConstants.LOGOUT};};
-
-
-var receiveCurrentUser=exports.receiveCurrentUser=function receiveCurrentUser(currentUser){return{
-type:SessionConstants.RECEIVE_CURRENT_USER,
-currentUser:currentUser};};
-}, "takeuplessApp/actions/session_actions.js");
 __d(722 /* react-native-maps/index.js */, function(global, require, module, exports) {var _MapView=require(723 /* ./components/MapView */);var _MapView2=babelHelpers.interopRequireDefault(_MapView);
 
 module.exports=_MapView2.default;
@@ -89612,7 +89532,8 @@ module.exports=MapCallout;
 }, "react-native-maps/components/MapCallout.js");
 __d(729 /* takeuplessApp/components/map/modal.js */, function(global, require, module, exports) {Object.defineProperty(exports,"__esModule",{value:true});var _react=require(12 /* react */);var _react2=babelHelpers.interopRequireDefault(_react);
 var _reactNative=require(77 /* react-native */);
-var _reactNativeSelectme=require(730 /* react-native-selectme */);var _reactNativeSelectme2=babelHelpers.interopRequireDefault(_reactNativeSelectme);var
+var _reactNativeSelectme=require(730 /* react-native-selectme */);var _reactNativeSelectme2=babelHelpers.interopRequireDefault(_reactNativeSelectme);
+var _reactNativeRouterFlux=require(73 /* react-native-router-flux */);var
 
 RouteModal=function(_Component){babelHelpers.inherits(RouteModal,_Component);
 
@@ -89650,7 +89571,9 @@ _react2.default.createElement(_reactNative.Modal,{
 animationType:"none",
 transparent:false,
 visible:this.state.modalVisible,
-onRequestClose:function onRequestClose(){alert("Modal has been closed.");}},
+onRequestClose:function onRequestClose(){
+_this3.setModalVisible(!_this3.state.modalVisible);
+}},
 
 _react2.default.createElement(_reactNative.View,{style:styles.container},
 _react2.default.createElement(_reactNative.View,null,
@@ -89677,7 +89600,6 @@ _this3.setModalVisible(!_this3.state.modalVisible);
 _this3.submit();
 }},
 _react2.default.createElement(_reactNative.Text,{style:styles.submit},'Submit')))),
-
 
 
 
@@ -90426,7 +90348,7 @@ _reactNative.AsyncStorage.multiSet([
 
 }
 });
-_reactNativeRouterFlux.Actions.mapScreen();
+_reactNativeRouterFlux.Actions.mapScreen({type:'reset'});
 }else if(newProps.currentUser&&newProps.currentUser[0]){
 this.setState({username:"",password:""});
 _reactNative.Alert.alert('',"Username and Password Mismatch");

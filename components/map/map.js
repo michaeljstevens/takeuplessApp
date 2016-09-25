@@ -90,7 +90,7 @@ class Map extends Component {
         }, visible: false, started: true});
       },
       (error) => {console.log(error);},
-      {enableHighAccuracy: true, distanceFilter: 5}
+      {enableHighAccuracy: true, distanceFilter: 1}
     );
   }
 
@@ -188,7 +188,7 @@ class Map extends Component {
         <Text style={styles.menuText}>Logout</Text>
       </TouchableHighlight>
       <TouchableHighlight onPress={this.showMenu}>
-        <Text style={styles.menuText}>Close Menu</Text>
+        <Text style={styles.menuText}>Return</Text>
       </TouchableHighlight>
     </View>);
 
@@ -202,7 +202,6 @@ class Map extends Component {
           hidden={true}
           />
         <NavbarContainer showMenu={this.showMenu}/>
-        {this.state.showMenu ? menu : null }
         <MapView style={styles.map}  region={this.state.region}>
           <Polyline coordinates={this.state.coordinates} strokeWidth={5} strokeColor={'#00F'}
             />
@@ -212,6 +211,7 @@ class Map extends Component {
         </MapView>
         <StopWatch started={this.state.started} />
         {this.state.started ? stopButton : startButton}
+        {this.state.showMenu ? menu : null }
       </View>
     );
   }
@@ -225,20 +225,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#000',
   },
+
   menuContainer: {
     position: 'absolute',
-    right: 50,
-    top: 50,
+    top: 60,
+    right: 15,
     backgroundColor: '#FFF',
+    borderRadius: 5,
     zIndex: 1001,
     flex: 1,
     justifyContent: 'center',
-    borderRadius: 5,
+    borderWidth: 1,
+    width: 115,
   },
   menuText: {
-    fontSize: 40,
-    borderWidth: 1,
-    color: "#000"
+    fontSize: 30,
+    color: "#000",
+    padding: 5,
   },
   map: {
    position: 'absolute',

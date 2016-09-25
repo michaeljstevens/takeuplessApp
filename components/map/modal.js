@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Modal, Text, TouchableHighlight, View, TextInput, StyleSheet, Picker } from 'react-native';
 import Dropdown, {Select, Option, OptionList} from 'react-native-selectme';
+import {Actions} from 'react-native-router-flux';
 
 class RouteModal extends Component {
 
@@ -38,7 +39,9 @@ class RouteModal extends Component {
           animationType={"none"}
           transparent={false}
           visible={this.state.modalVisible}
-          onRequestClose={() => {alert("Modal has been closed.");}}
+          onRequestClose={() => {
+            this.setModalVisible(!this.state.modalVisible);
+          }}
           >
          <View style={styles.container}>
             <View>
@@ -66,7 +69,6 @@ class RouteModal extends Component {
             }}>
               <Text style={styles.submit}>Submit</Text>
             </TouchableHighlight>
-
          </View>
         </Modal>
 
