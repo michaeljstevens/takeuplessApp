@@ -1,32 +1,25 @@
 import React, {Component} from 'react';
-import {View, Text, TextInput, StyleSheet, Image, AsyncStorage} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Image, AsyncStorage, TouchableHighlight} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
 class Navbar extends Component {
 
   constructor(props) {
     super(props);
-    this.logout = this.logout.bind(this);
   }
-
-  logout(e) {
-    e.preventDefault();
-    this.props.logout();
-    AsyncStorage.multiRemove(['username', 'password']);
-    Actions.loginScreen({type: 'reset'});
-  }
-  // <Button onPress={this.logout} style={styles.button}>Logout</Button>
 
   render() {
     return(
       <View style={styles.container}>
         <Image style = {styles.logo}
         source={{uri: 'http://res.cloudinary.com/dj6gqauyi/image/upload/v1473357234/logo_ucucfj.png'}} />
-        <View style={styles.rightContent}>
-          {this.props.loggedIn ? <Text style={styles.name}>{this.props.currentUser.username}</Text> : null}
-          {this.props.loggedIn ? <Image style={styles.profile}
-          source={{uri: this.props.currentUser.profile_picture}} /> : null}
-        </View>
+        <TouchableHighlight onPress={this.props.showMenu}>
+          <View style={styles.rightContent}>
+              <Text style={styles.name}>{this.props.currentUser.username}</Text>
+            {this.props.loggedIn ? <Image style={styles.profile}
+            source={{uri: this.props.currentUser.profile_picture}} /> : null}
+          </View>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -57,6 +50,7 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 40,
+    marginLeft: 5,
   },
   name: {
     color: '#fff',

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import NavbarContainer from '../navbar/navbar_container.js';
 import {
   StyleSheet,
+  AsyncStorage,
   Picker,
   Text,
   View,
@@ -14,6 +15,7 @@ import MapView, {Polyline} from 'react-native-maps';
 import RouteModal from './modal.js';
 import StopWatch from '../stopwatch/stopwatch.js';
 import Spinner from 'react-native-loading-spinner-overlay';
+import {Actions} from 'react-native-router-flux';
 
 class Map extends Component {
 
@@ -33,12 +35,15 @@ class Map extends Component {
         appcoords: null
       },
       visible: false,
+      showMenu: false,
     };
     this.startMarker = {latitude: 37.782957, longitude: -122.397981};
     this.startWorkout = this.startWorkout.bind(this);
     this.stopWorkout = this.stopWorkout.bind(this);
     this.getDuration = this.getDuration.bind(this);
     this.submitRoute = this.submitRoute.bind(this);
+    this.showMenu = this.showMenu.bind(this);
+    this.logout = this.logout.bind(this);
   }
 
   componentWillMount() {
@@ -158,10 +163,34 @@ class Map extends Component {
     return deg * (Math.PI/180);
   }
 
+  showMenu() {
+    if (this.state.showMenu) {
+      this.setState({showMenu: false});
+    } else {
+      this.setState({showMenu: true});
+    }
+  }
+
+  logout(e) {
+    e.preventDefault();
+    this.props.logout();
+    AsyncStorage.multiRemove(['username', 'password']);
+    Actions.loginScreen({type: 'reset'});
+  }
+
   render() {
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
+
+    const menu = (<View style={styles.menuContainer}>
+      <TouchableHighlight onPress={this.logout}>
+        <Text style={styles.menuText}>Logout</Text>
+      </TouchableHighlight>
+      <TouchableHighlight onPress={this.showMenu}>
+        <Text style={styles.menuText}>Close Menu</Text>
+      </TouchableHighlight>
+    </View>);
 
     const stopButton = <RouteModal stopWorkout={this.stopWorkout} route={this.state.route} coordinates={this.state.coordinates}
       submitRoute={this.submitRoute} />;
@@ -172,7 +201,8 @@ class Map extends Component {
         <StatusBar
           hidden={true}
           />
-        <NavbarContainer />
+        <NavbarContainer showMenu={this.showMenu}/>
+        {this.state.showMenu ? menu : null }
         <MapView style={styles.map}  region={this.state.region}>
           <Polyline coordinates={this.state.coordinates} strokeWidth={5} strokeColor={'#00F'}
             />
@@ -187,12 +217,28 @@ class Map extends Component {
   }
 }
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: '#000',
+  },
+  menuContainer: {
+    position: 'absolute',
+    right: 50,
+    top: 50,
+    backgroundColor: '#FFF',
+    zIndex: 1001,
+    flex: 1,
+    justifyContent: 'center',
+    borderRadius: 5,
+  },
+  menuText: {
+    fontSize: 40,
+    borderWidth: 1,
+    color: "#000"
   },
   map: {
    position: 'absolute',
@@ -214,5 +260,7 @@ const styles = StyleSheet.create({
    borderRadius: 5,
  },
 });
+
+
 
 export default Map;
