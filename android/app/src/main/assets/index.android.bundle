@@ -88125,6 +88125,7 @@ _reactNativeRouterFlux.Actions.loginScreen({type:'reset'});
 }},{key:'render',value:function render()
 
 {
+console.log(this.state.started);
 var startButton=_react2.default.createElement(_reactNative.TouchableHighlight,{style:styles.touchable,onPress:this.startWorkout},
 _react2.default.createElement(_reactNative.Text,{style:styles.text},'Start'));
 
@@ -90104,7 +90105,6 @@ _this.formatTime=_this.formatTime.bind(_this);return _this;
 }babelHelpers.createClass(StopWatch,[{key:'componentWillReceiveProps',value:function componentWillReceiveProps(
 
 props){
-
 if(this.props.started&&!this.state.started){
 this.start();
 }else if(!props.started){
@@ -90113,11 +90113,10 @@ this.stop();
 }},{key:'start',value:function start()
 
 {var _this2=this;
-this.setState({startTime:new Date()});
+this.setState({startTime:new Date(),started:true});
 this.interval=setInterval(function(){
 _this2.setState({
-elapsed:new Date()-_this2.state.startTime,
-started:true});
+elapsed:new Date()-_this2.state.startTime});
 
 },1000);
 }},{key:'stop',value:function stop()
@@ -90139,6 +90138,7 @@ return formatted;
 
 
 {
+console.log("stopwatch");
 return(
 _react2.default.createElement(_reactNative.View,{style:styles.container},
 _react2.default.createElement(_reactNative.Text,{style:styles.timer},this.formatTime())));

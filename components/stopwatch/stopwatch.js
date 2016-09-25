@@ -16,7 +16,6 @@ class StopWatch extends Component {
   }
 
   componentWillReceiveProps(props) {
-
     if (this.props.started && !this.state.started) {
       this.start();
     } else if(!props.started) {
@@ -25,11 +24,10 @@ class StopWatch extends Component {
   }
 
   start() {
-    this.setState({startTime: new Date()});
+    this.setState({startTime: new Date(), started: true});
     this.interval = setInterval(() => {
       this.setState({
-        elapsed: new Date() - this.state.startTime,
-        started: true
+        elapsed: new Date() - this.state.startTime
       });
     }, 1000);
   }
@@ -51,6 +49,7 @@ class StopWatch extends Component {
 
 
   render() {
+    console.log("stopwatch");
     return(
       <View style={styles.container}>
         <Text style={styles.timer}>{this.formatTime()}</Text>

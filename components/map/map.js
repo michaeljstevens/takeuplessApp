@@ -179,6 +179,7 @@ class Map extends Component {
   }
 
   render() {
+    console.log(this.state.started);
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
