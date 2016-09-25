@@ -5,6 +5,7 @@ import {Actions} from 'react-native-router-flux';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 class SessionForm extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +15,7 @@ class SessionForm extends Component {
     };
     this.updateState = this.updateState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.logout = this.logout.bind(this);
+    this.startDemo = this.startDemo.bind(this);
   }
 
   componentWillMount() {
@@ -29,6 +30,9 @@ class SessionForm extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    console.log(this.state.username);
+    console.log(this.state.password);
+    console.log(newProps);
     if (newProps.currentUser && !(newProps.currentUser[0])) {
       AsyncStorage.multiGet(['username', 'password']).then((data) => {
         if (!data[0][1] && !data[1][1]) {
@@ -38,10 +42,12 @@ class SessionForm extends Component {
       		]);
         }
       });
-      Actions.mapScreen();
-    } else if (newProps.currentUser && newProps.currentUser[0] === "Invalid Credentials") {
+      Actions.mapScreen({type: 'reset'});
+    } else if (newProps.currentUser && newProps.currentUser[0]) {
+      this.setState({username: "", password: ""});
       Alert.alert('', "Username and Password Mismatch");
     }
+
     this.setState({visible: false});
   }
 
@@ -53,16 +59,21 @@ class SessionForm extends Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({visible: true});
     const user = this.state;
     delete user.visible;
+    console.log(user);
     this.props.login(user);
+    this.setState({visible: true});
   }
 
-  logout(e) {
+  startDemo(e) {
     e.preventDefault();
-    this.props.logout();
-    AsyncStorage.multiRemove(['username', 'password']);
+    this.state.username = "Jeff Goldblum";
+    this.state.password = "password";
+    const user = this.state;
+    delete user.state;
+    this.props.login(user);
+    this.setState({visible: true});
   }
 
   render() {
@@ -78,16 +89,22 @@ class SessionForm extends Component {
 
         <View style={{padding: 5}}>
           <Text style={styles.text}>Username</Text>
-          <TextInput onChangeText={this.updateState("username")} style={styles.input} />
+          <TextInput value={this.state.username} onChangeText={this.updateState("username")} style={styles.input} />
         </View>
 
         <View style={{padding: 5}}>
           <Text style={styles.text}>Password</Text>
-          <TextInput onChangeText={this.updateState("password")} secureTextEntry={true} style={styles.input} />
-          <TouchableHighlight style={styles.touchable} onPress={this.handleSubmit}>
-            <Text style={[styles.text, {borderWidth: 1, borderColor: 'white', padding: 5,
-            borderRadius: 5, width: 75, marginTop: 20, marginLeft: 125, textAlign: 'center'}]}>Login</Text>
-          </TouchableHighlight>
+          <TextInput value={this.state.password} onChangeText={this.updateState("password")} secureTextEntry={true} style={styles.input} />
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <TouchableHighlight style={styles.touchable} onPress={this.handleSubmit}>
+              <Text style={[styles.text, {borderWidth: 1, borderColor: 'white', padding: 5,
+                borderRadius: 5, width: 75, marginTop: 20, marginLeft: 0, textAlign: 'center'}]}>Login</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.touchable} onPress={this.startDemo}>
+              <Text style={[styles.text, {borderWidth: 1, borderColor: 'white', padding: 5,
+              borderRadius: 5, width: 80, marginTop: 20, marginLeft: 45, textAlign: 'center'}]}>Demo</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     );

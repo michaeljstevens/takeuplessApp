@@ -18,14 +18,11 @@
         android:name="com.google.android.geo.API_KEY"
         android:value="AIzaSyC9eN3qFC_ZUVavXS7WFSY_WAVTs8ox1ME"/>
 
-      android:name=".MainApplication"
-      android:allowBackup="true"
-      android:label="@string/app_name"
-      android:icon="@mipmap/ic_launcher"
-      android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"
-        android:label=""
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.AppCompat.NoActionBar"
+        android:label="takeupless"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

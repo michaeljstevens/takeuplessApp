@@ -15,9 +15,9 @@ class AppRouter extends Component {
     return (
       <Router hideNavBar={true}>
         <Scene key="root">
-          <Scene key="loginScreen" component={SessionFormContainer}
+          <Scene key="loginScreen" component={SessionFormContainer} panHandlers={null}
             initial={true} />
-          <Scene key="mapScreen" component={MapContainer} />
+          <Scene key="mapScreen" component={MapContainer} panHandlers={null} />
         </Scene>
       </Router>
     );

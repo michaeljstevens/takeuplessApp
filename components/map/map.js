@@ -44,6 +44,7 @@ class Map extends Component {
   componentWillMount() {
     navigator.geolocation.getCurrentPosition(
      (position) => {
+       console.log(position);
        const lat = position.coords.latitude;
        const lng = position.coords.longitude;
        this.startMarker = {latitude: lat, longitude: lng};
@@ -54,7 +55,10 @@ class Map extends Component {
          longitudeDelta: 0.00421,
        }});
      },
-     (error) => {console.log(error);}
+     (error) => {
+       console.log(error);
+     },
+     {enableHighAccuracy: true, timeout: 5000}
    );
   }
 
@@ -78,9 +82,10 @@ class Map extends Component {
           longitude: lng,
           latitudeDelta: 0.00922,
           longitudeDelta: 0.00421
-        }, started: true, visible: false});
+        }, visible: false, started: true});
       },
-      (error) => {console.log(error);}
+      (error) => {console.log(error);},
+      {enableHighAccuracy: true, distanceFilter: 5}
     );
   }
 

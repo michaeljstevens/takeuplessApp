@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, TextInput, StyleSheet, Image, AsyncStorage} from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import Button from 'react-native-button';
 
 class Navbar extends Component {
 
@@ -14,8 +13,9 @@ class Navbar extends Component {
     e.preventDefault();
     this.props.logout();
     AsyncStorage.multiRemove(['username', 'password']);
-    Actions.loginScreen();
+    Actions.loginScreen({type: 'reset'});
   }
+  // <Button onPress={this.logout} style={styles.button}>Logout</Button>
 
   render() {
     return(
@@ -23,7 +23,7 @@ class Navbar extends Component {
         <Image style = {styles.logo}
         source={{uri: 'http://res.cloudinary.com/dj6gqauyi/image/upload/v1473357234/logo_ucucfj.png'}} />
         <View style={styles.rightContent}>
-          <Button onPress={this.logout} style={styles.button}>Logout</Button>
+          {this.props.loggedIn ? <Text style={styles.name}>{this.props.currentUser.username}</Text> : null}
           {this.props.loggedIn ? <Image style={styles.profile}
           source={{uri: this.props.currentUser.profile_picture}} /> : null}
         </View>
@@ -58,10 +58,13 @@ const styles = StyleSheet.create({
     width: 200,
     height: 40,
   },
-  button: {
+  name: {
     color: '#fff',
-    marginTop: 13,
-    marginRight: 5,
+    fontSize: 15,
+    marginTop: 10,
+    textAlign: 'right',
+    marginRight: 7,
+    width: 75,
   }
 });
 
