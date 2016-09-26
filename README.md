@@ -83,27 +83,27 @@ To install on Android device (no play store)
 
 To use, first create an account at [takeupless][tulurl] or use the provided demo account. You can then login.
 
-![login](docs/img/login.png)
+<img src="docs/img/login.png" width="40%" />
 
 Once you login, your session will persist until you logout manually or uninstall the application. You will arrive at a map screen with a stopwatch. Simply press Start and begin walking/running/cycling!
 
-![start](docs/img/start.png)
+<img src="docs/img/start.png" width="40%" />
 
 As you move, you'll see a line drawn on the map documenting where you've been.
 
-![during](docs/img/during.png)
+<img src="docs/img/during.png" width="40%" />
 
 When you finish, press Stop and a screen will appear for you to submit details about the route.
 
-![stop](docs/img/submit.png)
+<img src="docs/img/submit.png" width="40%" />
 
 Press submit and the route will be submitted to your takeupless account.
 
-![saved](docs/img/Saved.png)
+<img src="docs/img/Saved.png" width="40%" />
 
 To logout, touch your profile picture or username.
 
-![logout](docs/img/logout.png)
+<img src="docs/img/logout.png" width="40%" />
 
 Login to your account the main [takeupless][tulurl] website to view your route.
 
