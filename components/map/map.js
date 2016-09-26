@@ -73,8 +73,6 @@ class Map extends Component {
     this.startTime = new Date();
     this.watch = navigator.geolocation.watchPosition(
       (position) => {
-        console.log(position.coords.latitude);
-        console.log(position.coords.longitude);
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         const newCoords = Array.from(that.state.coordinates);
@@ -135,31 +133,31 @@ class Map extends Component {
     let kmDistance = 0;
     for (let i = 0; i < coordinates.length - 1; i++) {
       const lat1 = coordinates[i].latitude;
-      const lon1 = coordinates[i].longitude;
+      const lng1 = coordinates[i].longitude;
       const lat2 = coordinates[i + 1].latitude;
-      const lon2 = coordinates[i + 1].longitude;
-      kmDistance += this.getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2);
+      const lng2 = coordinates[i + 1].longitude;
+      kmDistance += this.calcCoords(lat1, lng1, lat2, lng2);
     }
     let mDistance = Math.round((kmDistance * 0.62) * 10)/10;
     let sDistance = `${mDistance} mi`;
     this.state.route.distance = sDistance;
   }
 
-  getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-    let R = 6371; // Radius of the earth in km
-    let dLat = this.deg2rad(lat2-lat1);  // deg2rad below
-    let dLon = this.deg2rad(lon2-lon1);
+  calcCoords(lat1,lng1,lat2,lng2) {
+    let earthRadius = 6371;
+    let lat = this.rad(lat2-lat1);
+    let lng = this.rad(lng2-lng1);
     let a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2)
+      Math.sin(lat/2) * Math.sin(lat/2) +
+      Math.cos(this.rad(lat1)) * Math.cos(this.rad(lat2)) *
+      Math.sin(lng/2) * Math.sin(lng/2)
       ;
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    let d = R * c; // Distance in km
+    let d = earthRadius * c;
     return d;
   }
 
-  deg2rad(deg) {
+  rad(deg) {
     return deg * (Math.PI/180);
   }
 
