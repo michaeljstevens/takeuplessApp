@@ -13,9 +13,10 @@ import {
 
 import MapView, {Polyline} from 'react-native-maps';
 import RouteModal from './modal.js';
-import StopWatch from '../stopwatch/stopwatch.js';
+// import StopWatch from '../stopwatch/stopwatch.js';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Actions} from 'react-native-router-flux';
+import {Stopwatch} from 'react-native-stopwatch-timer';
 
 class Map extends Component {
 
@@ -177,7 +178,6 @@ class Map extends Component {
   }
 
   render() {
-    console.log(this.state.started);
     const startButton = <TouchableHighlight style={styles.touchable} onPress={this.startWorkout}>
       <Text style={styles.text}>Start</Text>
     </TouchableHighlight>;
@@ -208,7 +208,7 @@ class Map extends Component {
             coordinate={this.startMarker}
             />
         </MapView>
-        <StopWatch started={this.state.started} />
+        <StopWatch start={this.state.started} options={stopwatchStyles} />
         {this.state.started ? stopButton : startButton}
         {this.state.showMenu ? menu : null }
       </View>
@@ -262,6 +262,23 @@ const styles = StyleSheet.create({
    borderRadius: 5,
  },
 });
+
+const stopwatchStyles = {
+  container: {
+    position: 'absolute',
+    backgroundColor: '#000',
+    top: 80,
+    left: 20,
+    padding: 5,
+    borderRadius: 5,
+    width: 150,
+  },
+  timer: {
+    fontSize: 30,
+    color: '#FFF',
+    marginLeft: 7,
+  }
+};
 
 
 
