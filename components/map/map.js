@@ -208,13 +208,14 @@ class Map extends Component {
             coordinate={this.startMarker}
             />
         </MapView>
-        <StopWatch start={this.state.started} options={stopwatchStyles} />
+        <Stopwatch start={this.state.started} options={stopwatchStyles} />
         {this.state.started ? stopButton : startButton}
         {this.state.showMenu ? menu : null }
       </View>
     );
   }
 }
+
 
 
 const styles = StyleSheet.create({
@@ -273,7 +274,7 @@ const stopwatchStyles = {
     borderRadius: 5,
     width: 150,
   },
-  timer: {
+  text: {
     fontSize: 30,
     color: '#FFF',
     marginLeft: 7,
