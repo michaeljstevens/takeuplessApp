@@ -13,7 +13,6 @@ import {
 
 import MapView, {Polyline} from 'react-native-maps';
 import RouteModal from './modal.js';
-// import StopWatch from '../stopwatch/stopwatch.js';
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Actions} from 'react-native-router-flux';
 import {Stopwatch} from 'react-native-stopwatch-timer';
@@ -89,7 +88,7 @@ class Map extends Component {
         }, visible: false, started: true});
       },
       (error) => {console.log(error);},
-      {enableHighAccuracy: true, distanceFilter: 1}
+      {enableHighAccuracy: true, distanceFilter: 3}
     );
   }
 
