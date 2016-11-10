@@ -30,9 +30,6 @@ class SessionForm extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    console.log(this.state.username);
-    console.log(this.state.password);
-    console.log(newProps);
     if (newProps.currentUser && !(newProps.currentUser[0])) {
       AsyncStorage.multiGet(['username', 'password']).then((data) => {
         if (!data[0][1] && !data[1][1]) {
@@ -61,7 +58,6 @@ class SessionForm extends Component {
     e.preventDefault();
     const user = this.state;
     delete user.visible;
-    console.log(user);
     this.props.login(user);
     this.setState({visible: true});
   }

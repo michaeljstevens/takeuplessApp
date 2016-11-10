@@ -25,6 +25,7 @@ class Map extends Component {
       region: null,
       coordinates: [],
       started: false,
+      reset: false,
       route: {
         user_id: this.props.currentUser.id,
         distance: null,
@@ -68,11 +69,18 @@ class Map extends Component {
   }
 
   startWorkout() {
+    let firstRender = true;
     this.setState({visible: true});
     let that = this;
     this.startTime = new Date();
     this.watch = navigator.geolocation.watchPosition(
       (position) => {
+
+        if(firstRender) {
+          this.setState({started: true, reset: false});
+          firstRender = false;
+        }
+
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         const newCoords = Array.from(that.state.coordinates);
@@ -85,10 +93,10 @@ class Map extends Component {
           longitude: lng,
           latitudeDelta: 0.00922,
           longitudeDelta: 0.00421
-        }, visible: false, started: true});
+        }, visible: false});
       },
       (error) => {console.log(error);},
-      {enableHighAccuracy: true, distanceFilter: 3}
+      {enableHighAccuracy: true, distanceFilter: 1}
     );
   }
 
@@ -110,7 +118,7 @@ class Map extends Component {
     route.description = modalState.description;
     route.activity_type = modalState.activity_type;
     this.props.createRoute(route);
-    this.setState({route: {
+    this.setState({started: false, reset: true, route: {
       user_id: this.props.currentUser.id,
       distance: null,
       duration: null,
@@ -118,7 +126,7 @@ class Map extends Component {
       description: "",
       activity_type: "",
       appcoords: null
-    }, coordinates: [], started: false});
+    }, coordinates: []});
     Alert.alert('', "Route Created Successfully");
   }
 
@@ -207,7 +215,7 @@ class Map extends Component {
             coordinate={this.startMarker}
             />
         </MapView>
-        <Stopwatch start={this.state.started} options={stopwatchStyles} />
+        <Stopwatch start={this.state.started} reset={this.state.reset} options={stopwatchStyles} />
         {this.state.started ? stopButton : startButton}
         {this.state.showMenu ? menu : null }
       </View>

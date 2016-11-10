@@ -32,7 +32,6 @@ class RouteModal extends Component {
   }
 
   render() {
-    console.log(this.state);
     return(
       <View style={styles.container2}>
         <Modal
@@ -73,8 +72,8 @@ class RouteModal extends Component {
         </Modal>
 
         <TouchableHighlight style={styles.touchable} onPress={() => {
-          this.props.stopWorkout();
           this.setModalVisible(true);
+          this.props.stopWorkout();
         }}>
           <Text style={styles.button}>Stop</Text>
         </TouchableHighlight>
